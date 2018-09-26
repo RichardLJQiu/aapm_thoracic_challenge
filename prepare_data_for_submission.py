@@ -1,7 +1,7 @@
 from __future__ import division
 import os, sys, glob
 import numpy as np
-import dicom
+import pydicom
 from skimage.draw import polygon
 from skimage.transform import resize
 import h5py
@@ -14,7 +14,7 @@ def read_images_info(path):
     for subdir, dirs, files in os.walk(path):
         dcms = glob.glob(os.path.join(subdir, '*.dcm'))
         if len(dcms) > 1:
-            slices = [dicom.read_file(dcm) for dcm in dcms]
+            slices = [pydicom.dcmread(dcm) for dcm in dcms]
             slices.sort(key = lambda x: float(x.ImagePositionPatient[2]))
             images = np.stack([s.pixel_array for s in slices], axis=0).astype(np.float32)
             images = images + slices[0].RescaleIntercept
